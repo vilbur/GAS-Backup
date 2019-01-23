@@ -1,0 +1,102 @@
+/*=====================================================================================================================================*/
+/*                                                                                                                                     */
+/*  SheetOutput                                                                                                                          */
+/*                                                                                                                                     */
+/*=====================================================================================================================================*/
+
+/**
+ */
+var SheetOutput = function(  ){
+	//Browser.msgBox('SheetOutput()');
+	/*====== PRIVATE PROPERTIES ======*/
+	var self	= this;
+	var spread	= SpreadsheetApp.getActiveSpreadsheet();
+	var sheet	= spread.getActiveSheet();
+	var sheet_name	= sheet.getSheetName();	
+	var sheet_output	= spread.getSheetByName(sheet_output_name);	
+	var _Sheeter	= getSheeter();
+	//var cells	= sheet.getDataRange();
+	var notation_letters	= ("*ABCDEFGHIJKLMNOPQRSTUVWXYZ").split("");
+	var header_columns;
+	var header_columns_output;
+	var range	= sheet.getDataRange();		
+	var sheet_formulas	= { property:[], method:[] };
+	/*====== PUBLIC PROPERTIES ======*/
+  
+  
+	/*======================================================================================*/
+	/*  PUBLIC METHODS                                                                      */
+	/*======================================================================================*/
+
+     /**
+	 */
+	this.moveToOutput = function() {
+		var formulas = range.getFormulas();
+//        Browser.msgBox(JSON.stringify(formulas));
+		
+		/** setSheetFormulas
+		 */
+		var setSheetFormulas = function() {
+			for(var r=0; r<formulas.length;r++) {
+				//var formulas = formulas[r];
+				for(var c=0; c<formulas[r].length;c++) {
+					//var formulas[r] = formulas[r][c];
+
+					var match_formula = /=get(property|method)/gi.exec(formulas[r][c]);
+					if (match_formula) {
+						sheet_formulas[match_formula.pop().toLowerCase()].push(['INDEX('+sheet_name+'!'+notation_letters[c+1]+(r+1)+':'+notation_letters[c+2]+(r+1)+')']);
+					}
+					//=INDEX(Test.js!E2:F2)
+				}
+			}
+		};
+		/** setToOutputSheet
+		 * 
+		 */
+		var setToOutputSheet = function() {
+						
+			_Sheeter.setSheeet(sheet_output).setRows(2);
+			//Logger.log('sheet_formulas.method'+JSON.stringify(sheet_formulas.method));
+
+			if(sheet_formulas.property.length>0)
+				sheet_output.getRange(2,1,sheet_formulas.property.length, 1 ).setFormulas( sheet_formulas.property );
+			
+			if(sheet_formulas.method.length>0)
+				sheet_output.getRange(2,3,sheet_formulas.method.length, 1 ).setFormulas( sheet_formulas.method );
+		};
+		
+		setSheetFormulas();
+		setToOutputSheet();		
+	};
+  
+	/*======================================================================================*/
+	/*  PRIVATE METHODS                                                                     */
+	/*======================================================================================*/
+	/** arrayFlattern
+	 */
+	var arrayFlattern = function(arr) {
+		return [].concat.apply([], arr);
+	};
+  
+	/*======================================================================================*/
+	/*  INIT METHODS                                                                        */
+	/*======================================================================================*/	
+	/** setHeaderColumns
+	 */
+	var setHeaderColumns = function() {
+		header_columns	= arrayFlattern(sheet.getRange(1,1,1,sheet.getMaxColumns()).getValues()).map(function(label){return label.toLowerCase();});
+		header_columns_output	= arrayFlattern(sheet_output.getRange(1,1,1,sheet.getMaxColumns()).getValues()).map(function(label){return label.toLowerCase();});		
+		////header_columns = header_columns.map(function(label){return label.toLowerCase();});
+	};
+    
+	if(!sheet_output)
+		sheet_output = (new SnippetorSheetCreator()).createOutputSheet();
+    
+	setHeaderColumns();
+	
+    return this;
+};
+
+
+
+

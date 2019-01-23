@@ -1,0 +1,124 @@
+/* 
+ * There are 3 ways how script can be run
+ * 1. STANDALONE // if script is main script in sheet
+ * 2. LIBRARY    // if script is called via library to main script
+ * 3. MERGED     // if script is merged into main script // for production is better run directly from main script instead of calling via library
+ *
+ */
+
+/*=====================================================================================================================================*/
+/*                                                                                                                                     */
+	var project_name	= 'NewScript'; // COMMENT IN this line when script is merged to MAIN SCRIPT of sheet  
+/*                                                                                                                                     */
+/*=====================================================================================================================================*/
+
+/*-----------------------------------------------------------------------------------------------------------------*/
+/*                                                                                                                 */
+/* COMMENT OUT 'Class' declaration in line bellow when script is MERGED to main script of sheet                    */
+/*                                                                                                                 */
+//var NewScript = function(){ 
+/*-----------------------------------------------------------------------------------------------------------------*/
+	
+	/*====== PRIVATE PROPERTIES ======*/
+	var self	= this;
+	
+	/*====== PUBLIC PROPERTIES ======*/
+	
+	
+	
+	/*======================================================================================*/
+	/* NewScript - PUBLIC METHODS */
+	/*======================================================================================*/
+	/**	Each function called from menu must has it`s own call function
+	 *	Call function name format: {project_name}_{functionName}()
+	 */
+	this.testFunction = function(){
+		Browser.msgBox('NewScript().testFunction()');
+	};
+	
+	/*======================================================================================*/
+	/* NewScript - PRIVATE METHODS */
+	/*======================================================================================*/
+	
+	
+	
+	/* ================================================================= */
+	/* NewScript - EVENTS */
+	/* ================================================================= */
+	/**	Project specific onOpen Event
+	 *	Call via library:	NewScript.call(namespace, 'onOpen');
+	 *	Call when imported:	new NewScript().onOpen(); OR NewScriptNew().onOpen();
+	 */
+	this.onOpen = function(){
+		this.addMenu();
+	};
+	/**	Project specific onEdit Event
+	 *	Call via library:	NewScript.call(namespace, 'onEdit');
+	 *	Call when imported:	new NewScript().onEdit(); OR NewScriptNew().onOpen();
+	 */
+    this.onEdit = function(e) {
+		//Browser.msgBox('NewScript onEdit() '+ e.value);
+	};
+	/**	Native events must be declared for working this.onOpen() & this.onEdit() for standalone script
+	 */
+    function onOpen(){}
+    function onEdit(e){}
+	
+	/*======================================================================================*/
+	/* NewScript - MENU FUNCTIONS */
+	/*======================================================================================*/
+	/** Add meunu of this project to current spreadsheet
+	*/
+	this.addMenu = function(){  
+		Menu.create(project_name, this.getMenuItems(), namespace);  
+	};
+	
+	/**	get menu items for current script 
+	*	@param	nonamespace	boolean	add current script namespace if undefined E.G: getMenuItems(true) return 'fnName' || getMenuItems() return 'NewScript.fnName'
+	*	@return	array of function objects for menu
+	*/
+	this.getMenuItems = function(){
+		var items = [
+			['Help', 'NewScriptDialogHelp'],
+		];
+		/* Add test items - not shown if called library */
+		  if(namespace === ''){
+			items.push({'Test':[
+				['Test Function', 'NewScript_testFunction'],
+			]}); 
+		  }
+		return items;
+	};
+	
+	
+	/*======================================================================================*/
+	/* NewScript - INIT FUNCTIONS */
+	/*======================================================================================*/
+	
+	
+	
+	/*======================================================================================*/
+	/* NewScript - OTHER SCRIPTS OF PROJECT */
+	/*======================================================================================*/
+	
+	
+	
+	
+/*-----------------------------------------------------------------------------------------------------------------*/
+/*                                                                                                                 */
+/* COMMENT OUT 'Class' declaration in lines bellow when script is MERGED to main script of sheet                   */
+/*                                                                                                                 */
+//	return this;
+//}; // end of NewScript  // COMMENT OUT 'Class' declaration if script is MERGED to main script of sheet
+/*-----------------------------------------------------------------------------------------------------------------*/
+
+
+/** Get new instance of script
+ * @return self If script is STANDALONE script Else
+ * @return new instance when script MERGED in main script
+*/
+function NewScriptNew(){
+	return typeof NewScript === 'undefined' ? self : new NewScript();
+}
+
+

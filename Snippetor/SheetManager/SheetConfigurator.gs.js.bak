@@ -1,0 +1,90 @@
+/*=====================================================================================================================================*/
+/*                                                                                                                                     */
+/*  SheetConfigurator                                                                                                              */
+/*                                                                                                                                     */
+/*=====================================================================================================================================*/
+/* Create new _Sheeter fitting to purposes of this script
+ * Set formula columns auto widths
+ * Set formula columns colors
+ *
+ */
+
+var SheetConfigurator = function() {
+	/*====== PRIVATE PROPERTIES ======*/
+	var self	= this;
+	var spread	= SpreadsheetApp.getActiveSpreadsheet();
+	var sheet;
+	//var sheet_type; // input|output
+	//var sheet	= spread.getActiveSheet();
+	var _Sheeter	= getSheeter();
+
+	/* Definition of columns in sheets COLOR NAMES: http://www.htmlcsscolor.com/#cntMain_pnlList1 */
+	var sheets_columns = {
+		input:	{ 'Name':{color:'blue',weight:'bold',width:256}, 'Access':{color:'IndianRed',width:128}, 'Datatype':{color:'IndianRed',width:128}, 'Value':{color:'blue',weight:'bold',width:96}, 'UML':{color:'green'}, 'Definition':{color:'RoyalBlue'}, 'Snippet':{color:'DarkCyan'} },
+		output:	{'UML-Property':{color:'IndianRed'},'Definition-Property':{}, 'UML-Method':{color:'green'}, 'Definition-Method':{} }
+	};
+	var sheet_columns;
+	var sheet_columns_names;
+	/* Options for header row */
+	var header_row_options	= {color:'white', background:'#4A86E8', weight:'bold', align:'center'};
+	
+
+	/** configureSheetOutput
+	*/
+	this.configureSheet = function(sheet, sheet_type) {
+		sheet_columns	= sheets_columns[sheet_type];
+		sheet_columns_names	= Object.keys(sheet_columns);
+		
+		_Sheeter.setSheet(sheet)
+			.setRows(20)
+			.setColumns(sheet_columns_names.length)
+			.setHeaders(sheet_columns_names, header_row_options );
+			
+		columnsOptionsSetup();
+		
+	};
+
+	/*======================================================================================*/
+	/*  PRIVATE METHODS                                                                     */
+	/*======================================================================================*/
+	
+	/** columnsOptionsSetup
+	 */
+	var columnsOptionsSetup = function(sheet_columns) {
+
+		if(sheet)
+			for(var c=0; c<sheet_columns_names.length;c++) {
+				//var column	= sheet_columns_names[c];
+				var options	= sheet_columns[sheet_columns_names[c]];
+				var range	= sheet.getRange(2, c+1, sheet.getMaxRows()-1);
+				var options_keys	= Object.keys(options);
+				///* RESET options */
+				//range.setFontColor('black');
+				//SpreadsheetApp.flush();					
+				//range.setFontWeight('normal');
+				//SpreadsheetApp.flush();
+				/* SET options */
+				for(var o=0; o<options_keys.length;o++) {
+					var option	= options_keys[o];
+					var value	= options[option];
+					Logger.log('columnsOptionsSetup() range='+range +',option='+option +', value='+value );
+					_Sheeter.setRangeOptions(range, option, value);
+					//switch (option) {
+					//	case 'color':	range.setFontColor(value);break;
+					//	case 'weight':	range.setFontWeight(value);break;
+					//}
+					//SpreadsheetApp.flush();					
+				}
+			}
+	};
+
+	
+	
+	
+	
+	
+	
+	return this;
+};
+
+

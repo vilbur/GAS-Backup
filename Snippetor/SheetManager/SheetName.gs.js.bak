@@ -1,0 +1,53 @@
+/*=====================================================================================================================================*/
+/*                                                                                                                                     */
+/*  SheetName                                                                                                              */
+/*  Checkex if current sheet name if is valid for language, change if if not E.G: fooClass TO fooClass.js                              */
+/*  Get new sheet name via user input dialogs                                                                                          */
+/*                                                                                                                                     */
+/*                                                                                                                                     */
+/*=====================================================================================================================================*/
+
+
+/* SheetName
+*	
+*
+*/
+var SheetName = function() {
+	var langs	= [ 'ahk', 'php', 'js', 'css', 'scss', 'less',  ];
+	//var spread	= SpreadsheetApp.getActiveSpreadsheet();
+	var sheet_name;
+	var sheet_out_suffix	= '-out';
+	
+	//
+	///** setSheet_name
+	// */
+	//this.setSheetName = function(_sheet_name) {
+	//	Logger.log('validateSheetName()');
+	//	sheet_name = _sheet_name;
+	//	return this;
+	//};
+	
+	/** validateSheetName
+	 */
+	this.validateSheetName = function(sheet_name) {
+		Logger.log('validateSheetName('+sheet_name+')');
+		return( sheet_name.match( '.*\.('+ langs.join('|')+')$', 'gi') );
+	};
+
+	return this;
+};
+/* ================================================================= */
+/*	TEST FUNCTIONS                                                   */
+/* ================================================================= */
+///** validateCurrentSheetName
+//*/
+//function getSheetNameValidateOrRename(){
+//	var sheet_name = (new SheetName).getSheetNameValidateOrRename();
+//	Logger.log('sheet_name =' + sheet_name );
+//}
+///** getSheetName
+//*/
+//function getNewSheetName(){
+//	var sheet_name = (new SheetName).getNewSheetName();
+//	Logger.log('sheet_name =' + sheet_name );
+//}
